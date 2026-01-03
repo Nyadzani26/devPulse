@@ -1,0 +1,23 @@
+[tool.ruff]
+# Enable almost all rules by default
+select = ["E", "F", "I", "W", "C90", "B", "UP", "PL"]
+ignore = []
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
