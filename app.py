@@ -1,10 +1,19 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash # Hashing Tools!
 from config import config_options
 
 app = Flask(__name__)
-app.config.from_object(config_options['development'])
+
+# We will use the config options to set the config
+config_mode = os.environ.get('FLASK_ENV', 'development')
+app.config.from_object(config_options[config_mode])
+
 db = SQLAlchemy(app)
 
 # The "Bridge Table" - stores who follows whom
