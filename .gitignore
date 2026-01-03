@@ -1,0 +1,19 @@
+# Python Bytecodes & Environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+myenv/
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

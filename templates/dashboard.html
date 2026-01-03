@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - DevPulse{% endblock %}
+
+{% block content %}
+<!-- Pulse Creation Area -->
+<div class="card">
+    <h1 style="margin-bottom: 1rem;">Welcome, {{ user.username }}!</h1>
+    <form method="POST">
+        <div class="form-group">
+            <textarea name="content" required placeholder="What's happening in your code today?" rows="3" style="font-family: 'JetBrains Mono', monospace;"></textarea>
+        </div>
+        <button type="submit">Broadcasting Pulse 📡</button>
+    </form>
+</div>
+
+<!-- The Global Feed -->
+<div style="margin-top: 3rem;">
+    <h2 style="color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">The Global Feed</h2>
+    
+    {% for pulse in pulses %}
+        <div class="card" style="padding: 1.5rem; margin-top: 1rem;">
+            <!-- RELATIONAL POWER: Accessing the author's name through the pulse! -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="color: var(--accent); font-weight: 800; font-size: 0.9rem;">
+                    @{{ pulse.author.username }}
+                </div>
+                <!-- The Many-to-Many UI Logic -->
+                {% if pulse.author.id != user.id %}
+                    {% if pulse.author in user.followed %}
+                        <a href="{{ url_for('unfollow', user_id=pulse.author.id) }}" style="font-size: 0.7rem; color: var(--text-muted); text-decoration: none;">[ Unfollow ]</a>
+                    {% else %}
+                        <a href="{{ url_for('follow', user_id=pulse.author.id) }}" style="font-size: 0.7rem; color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">+ Follow</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            
+            <div style="margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+                {{ pulse.content }}
+            </div>
+        </div>
+    {% else %}
+        <p style="margin-top: 2rem; color: var(--text-muted); text-align: center;">Silence in the network... send the first pulse!</p>
+    {% endfor %}
+</div>
+{% endblock %}
