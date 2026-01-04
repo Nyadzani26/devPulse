@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Your Professional Persona{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 2rem auto;">
+    <h1 style="margin-bottom: 0.5rem;">Professional Settings</h1>
+    <p style="color: var(--text-muted); margin-bottom: 2rem;">Refine your identity on DevPulse Pro.</p>
+
+    <form method="POST">
+        <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Public
+            Identity</h3>
+        <div style="display: flex; gap: 1rem;">
+            <div class="form-group" style="flex: 1;">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="primary_stack">Primary Tech Stack</label>
+            <input type="text" name="primary_stack" id="primary_stack" placeholder="e.g. Python, Flask, React"
+                value="{{ user.primary_stack or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="bio">Professional Bio</label>
+            <textarea name="bio" id="bio" rows="4"
+                placeholder="Briefly describe your journey...">{{ user.bio or '' }}</textarea>
+        </div>
+
+        <h3
+            style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+            External Proof</h3>
+        <div class="form-group">
+            <label for="github_username">GitHub Username</label>
+            <input type="text" name="github_username" id="github_username" placeholder="your-github-handle"
+                value="{{ user.github_username or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="website_url">Website or Portfolio URL</label>
+            <input type="url" name="website_url" id="website_url" placeholder="https://yourwebsite.com"
+                value="{{ user.website_url or '' }}">
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" style="flex: 2;">Save Changes</button>
+            <a href="{{ url_for('main.dashboard') }}" class="btn-secondary"
+                style="flex: 1; text-decoration: none; text-align: center; line-height: 2.5rem; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color);">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

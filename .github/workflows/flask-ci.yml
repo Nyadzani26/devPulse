@@ -29,7 +29,7 @@ jobs:
       # A smoke test to make sure the app works
       - name: Run smoke test
         run: |
-          python -c "from app import app; print('App initialised successfully')"
+          python -c "from run import app; print('App initialised successfully')"
         env:
           SECRET_KEY: "ci-testing-key"
           FLASK_ENV: "development"

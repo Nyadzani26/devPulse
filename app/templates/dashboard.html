@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - DevPulse{% endblock %}
+
+{% block content %}
+<!-- Pro User Card -->
+<div class="card"
+    style="display: flex; gap: 2rem; align-items: start; background: linear-gradient(145deg, var(--card-bg), #2a2a2a);">
+    <div style="flex: 1;">
+        <h1 style="margin-bottom: 0.25rem;">{{ user.first_name }} {{ user.last_name }}</h1>
+        <p style="color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">
+            {{ user.primary_stack or "No tech stack defined yet" }}
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.4;">
+            {{ user.bio or "Share your professional journey with the world..." }}
+        </p>
+        <div style="margin-top: 1.5rem;">
+            <a href="{{ url_for('main.edit_profile') }}" class="btn-secondary"
+                style="font-size: 0.8rem; text-decoration: none; border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; color: var(--text-color);">⚙️
+                Edit Professional Identity</a>
+        </div>
+    </div>
+</div>
+
+<!-- Pulse Creation Area -->
+<div class="card" style="margin-top: 1.5rem;" id="submission-area">
+    <h3 id="form-title">Document Your Progress</h3>
+    <form method="POST">
+        <input type="hidden" name="parent_id" id="parent_id_input" value="">
+        <div class="form-group">
+            <textarea name="content" id="content_input" rows="3" placeholder="What have you been working on?"
+                style="font-family: 'JetBrains Mono', monospace;"></textarea>
+        </div>
+        <button type="submit" id="submit-btn" style="width: 100%;">Broadcast Your Milestone</button>
+        <button type="button" id="cancel-update"
+            style="width: 100%; display: none; margin-top: 0.5rem; background: var(--text-muted);"
+            onclick="resetForm()">Cancel Update</button>
+    </form>
+</div>
+
+<!-- The Global Feed -->
+<div style="margin-top: 3rem;">
+    <h2 style="color: var(--text-muted); font-size: 1rem; text-transform: uppercase;">The Global Progress Feed</h2>
+
+    {% for pulse in pulses %}
+    <!-- THE ROOT MILESTONE -->
+    <div class="card" style="padding: 1.5rem; margin-top: 1rem; border-left: 4px solid var(--accent);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>{{ pulse.author.first_name }} {{ pulse.author.last_name }}</strong>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">({{ pulse.author.primary_stack or "Dev"
+                    }})</span>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <!-- 🔗 UPDATE BUTTON (Only for your own pulses) -->
+                {% if pulse.author.id == user.id %}
+                <button data-id="{{ pulse.id }}" data-preview="{{ pulse.content[:30] }}..."
+                    onclick="handleUpdateClick(this)"
+                    style="font-size: 0.7rem; padding: 2px 8px; background: transparent; border: 1px solid var(--accent); color: var(--accent); cursor: pointer;">
+                    + Add Update
+                </button>
+                {% else %}
+                <!-- Social Proof Connect Logic -->
+                {% if pulse.author in user.followed %}
+                <a href="{{ url_for('main.unfollow', user_id=pulse.author.id) }}"
+                    style="font-size: 0.7rem; color: var(--text-muted); text-decoration: none;">[ Connected ]</a>
+                {% else %}
+                <a href="{{ url_for('main.follow', user_id=pulse.author.id) }}"
+                    style="font-size: 0.7rem; color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; font-weight: 600;">Connect</a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="margin-top: 1rem; font-family: 'JetBrains Mono';">{{ pulse.content }}</div>
+        <!-- --- THE NESTED UPDATES (THE CHAIN) --- -->
+        {% if pulse.updates %}
+        <div
+            style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-left: 2rem;">
+            {% for update in pulse.updates %}
+            <div style="margin-bottom: 1rem; padding: 0.5rem; border-left: 2px dashed var(--accent);">
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Iteration {{ loop.index }}</div>
+                <div style="font-family: 'JetBrains Mono'; font-size: 0.9rem;">{{ update.content }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+<!-- Interactive UI-->
+<script>
+    function handleUpdateClick(btn) {
+        const id = btn.getAttribute('data-id');
+        const preview = btn.getAttribute('data-preview');
+
+        document.getElementById('parent_id_input').value = id;
+        document.getElementById('form-title').innerText = "Update Milestone: " + preview;
+        document.getElementById('submit-btn').innerText = "Broadcast Update";
+        document.getElementById('cancel-update').style.display = "block";
+        document.getElementById('submission-area').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        document.getElementById('parent_id_input').value = "";
+        document.getElementById('form-title').innerText = "Document Your Progress";
+        document.getElementById('submit-btn').innerText = "Broadcast Your Milestone";
+        document.getElementById('cancel-update').style.display = "none";
+    }
+</script>
+{% endblock %}
